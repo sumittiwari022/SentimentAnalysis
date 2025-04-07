@@ -6,8 +6,8 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 import re
 
-train_data = pd.read_csv('/Users/robo/Downloads/jyupiter-nb/Sentiment/train.csv', encoding='latin1')
-test_data = pd.read_csv('/Users/robo/Downloads/jyupiter-nb/Sentiment/test.csv', encoding='latin1')
+train_data = pd.read_csv('train.csv', encoding='latin1')
+test_data = pd.read_csv('test.csv', encoding='latin1')
 df = pd.concat([train_data, test_data]).dropna()
 
 def clean_text(text):
