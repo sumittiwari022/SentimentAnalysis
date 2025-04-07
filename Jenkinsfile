@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         AWS_REGION = 'ap-south-1'
-        ECR_REGISTRY = '865698115856.dkr.ecr.ap-south-1.amazonaws.com'
+        ECR_REGISTRY = '<repo-name>'
         EKS_CLUSTER = 'sentiment-eks-cluster'
     }
     stages {
