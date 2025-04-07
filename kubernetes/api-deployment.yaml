@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: sentiment-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: sentiment-api
