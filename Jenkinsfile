@@ -1,14 +1,14 @@
 pipeline {
     agent any
     environment {
-        AWS_REGION = 'us-west-2'
-        ECR_REGISTRY = '<your-ecr-repo>'
+        AWS_REGION = 'ap-south-1'
+        ECR_REGISTRY = '865698115856.dkr.ecr.ap-south-1.amazonaws.com'
         EKS_CLUSTER = 'sentiment-eks-cluster'
     }
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/sentiment-analysis-pipeline.git'
+                git 'https://github.com/sumittiwari022/SentimentAnalysis.git'
             }
         }
         stage('Train Model') {
@@ -24,7 +24,7 @@ pipeline {
                 dir('api') {
                     sh 'docker build -t ${ECR_REGISTRY}/sentiment-api:latest .'
                     sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
-                    sh 'docker push ${ECR_REGISTRY}/sentiment-api:latest'
+                    sh 'docker push ${ECR_REGISTRY}/custom-images:sentiment-api'
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
                 dir('ui') {
                     sh 'docker build -t ${ECR_REGISTRY}/sentiment-ui:latest .'
                     sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
-                    sh 'docker push ${ECR_REGISTRY}/sentiment-ui:latest'
+                    sh 'docker push ${ECR_REGISTRY}/custom-images:sentiment-ui'
                 }
             }
         }

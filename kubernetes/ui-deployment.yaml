@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: sentiment-ui
-        image: <your-ecr-repo>/sentiment-ui:latest
+        image: 865698115856.dkr.ecr.ap-south-1.amazonaws.com/custom-images:sentiment-ui
         ports:
         - containerPort: 3000
