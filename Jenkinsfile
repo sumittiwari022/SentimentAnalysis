@@ -50,7 +50,7 @@ pipeline {
         stage('Build API') {
             steps {
                 dir('api') {
-                    sh 'docker build -t ${ECR_REGISTRY}/custom-images:sentiment-api . --no-cache'
+                    sh 'docker build -t ${ECR_REGISTRY}/custom-images:sentiment-api .'
                     sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
                     sh 'docker push ${ECR_REGISTRY}/custom-images:sentiment-api'
                 }
@@ -59,7 +59,7 @@ pipeline {
         stage('Build UI') {
             steps {
                 dir('ui') {
-                    sh 'docker build -t ${ECR_REGISTRY}/custom-images:sentiment-ui . --no-cache'
+                    sh 'docker build -t ${ECR_REGISTRY}/custom-images:sentiment-ui .'
                     sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
                     sh 'docker push ${ECR_REGISTRY}/custom-images:sentiment-ui'
                 }
