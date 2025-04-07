@@ -40,6 +40,13 @@ pipeline {
                 }
             }
         }
+        stage('Prepare API') {
+            steps {
+                sh 'mkdir -p api/model'
+                sh 'cp model/sentiment_model.pkl api/model/'
+                sh 'cp model/vectorizer.pkl api/model/'
+            }
+        }
         stage('Build API') {
             steps {
                 dir('api') {
