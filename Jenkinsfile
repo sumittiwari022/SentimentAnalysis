@@ -6,6 +6,25 @@ pipeline {
         EKS_CLUSTER = 'sentiment-eks-cluster'
     }
     stages {
+        stage("Cleanfirst") {
+             steps {
+                 cleanWs()
+             }
+         }
+        stage("Initialization") {
+    steps {
+        // use name of the patchset as the build name
+        // buildName "${BUILD_NUMBER}-${App_Name}-${GIT_BRANCH}"
+        wrap([$class: 'BuildUser']) {
+            script {
+                def changeLogSets = currentBuild.changeSets
+                currentBuild.displayName = "#${currentBuild.number}-#${params.GIT_BRANCH}--Build By: #${BUILD_USER}"
+                currentBuild.description = "Build By: ${BUILD_USER}"
+                }
+            
+            }
+        }
+    }
         stage('Checkout') {
     steps {
         checkout([$class: 'GitSCM',
@@ -51,5 +70,10 @@ pipeline {
         //         }
         //     }
         // }
+        stage("Cleanlast") {
+             steps {
+                 cleanWs()
+             }
+         }
     }
 }
