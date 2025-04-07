@@ -12,7 +12,7 @@ with open('/model/vectorizer.pkl', 'rb') as f:
 def clean_text(text):
     return ' '.join(re.sub(r'[^a-zA-Z\s]', '', text.lower()).split())
 
-@app.route('/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST'])
 def predict():
     data = request.get_json()
     text = data.get('text', '')
