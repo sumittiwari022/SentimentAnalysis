@@ -7,10 +7,12 @@ pipeline {
     }
     stages {
         stage('Checkout') {
-            steps {
-                git 'https://github.com/sumittiwari022/SentimentAnalysis.git'
-            }
-        }
+    steps {
+        checkout([$class: 'GitSCM',
+                  branches: [[name: '*/full-sentiment']],
+                  userRemoteConfigs: [[url: 'https://github.com/sumittiwari022/SentimentAnalysis.git']]])
+    }
+}
         stage('Train Model') {
             steps {
                 dir('model') {
