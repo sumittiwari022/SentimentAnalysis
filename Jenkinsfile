@@ -39,17 +39,17 @@ pipeline {
                 }
             }
         }
-        stage('Deploy to EKS') {
-            steps {
-                dir('kubernetes') {
-                    sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}'
-                    sh 'kubectl apply -f api-deployment.yaml'
-                    sh 'kubectl apply -f api-service.yaml'
-                    sh 'kubectl apply -f ui-deployment.yaml'
-                    sh 'kubectl apply -f ui-service.yaml'
-                    sh 'kubectl apply -f ingress.yaml'
-                }
-            }
-        }
+        // stage('Deploy to EKS') {
+        //     steps {
+        //         dir('kubernetes') {
+        //             sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}'
+        //             sh 'kubectl apply -f api-deployment.yaml'
+        //             sh 'kubectl apply -f api-service.yaml'
+        //             sh 'kubectl apply -f ui-deployment.yaml'
+        //             sh 'kubectl apply -f ui-service.yaml'
+        //             sh 'kubectl apply -f ingress.yaml'
+        //         }
+        //     }
+        // }
     }
 }
