@@ -1,46 +1,52 @@
 pipeline {
     agent any
-
     environment {
-        IMAGE_NAME = 'sentiment-app'
-        DOCKER_HUB_USER = 'sumittiwari022'
+        AWS_REGION = 'us-west-2'
+        ECR_REGISTRY = '<your-ecr-repo>'
+        EKS_CLUSTER = 'sentiment-eks-cluster'
     }
-
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/sumittiwari022/SentimentAnalysis.git'
+                git 'https://github.com/your-repo/sentiment-analysis-pipeline.git'
             }
         }
-
         stage('Train Model') {
             steps {
-                sh 'python sentiment_model/train_model.py'
-            }
-        }
-
-        stage('Build Image') {
-            steps {
-                dir('webapp') {
-                    sh 'docker build -t $DOCKER_HUB_USER/$IMAGE_NAME:latest .'
+                dir('model') {
+                    sh 'docker build -t sentiment-model .'
+                    sh 'docker run -v $(pwd):/model sentiment-model'
                 }
             }
         }
-
-        stage('Push Image') {
+        stage('Build API') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                    sh 'docker push $DOCKER_HUB_USER/$IMAGE_NAME:latest'
+                dir('api') {
+                    sh 'docker build -t ${ECR_REGISTRY}/sentiment-api:latest .'
+                    sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
+                    sh 'docker push ${ECR_REGISTRY}/sentiment-api:latest'
                 }
             }
         }
-
+        stage('Build UI') {
+            steps {
+                dir('ui') {
+                    sh 'docker build -t ${ECR_REGISTRY}/sentiment-ui:latest .'
+                    sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REGISTRY}'
+                    sh 'docker push ${ECR_REGISTRY}/sentiment-ui:latest'
+                }
+            }
+        }
         stage('Deploy to EKS') {
             steps {
-                sh 'kubectl apply -f deploy/deployment.yaml'
-                sh 'kubectl apply -f deploy/service.yaml'
-                sh 'kubectl apply -f deploy/ingress.yaml'
+                dir('kubernetes') {
+                    sh 'aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}'
+                    sh 'kubectl apply -f api-deployment.yaml'
+                    sh 'kubectl apply -f api-service.yaml'
+                    sh 'kubectl apply -f ui-deployment.yaml'
+                    sh 'kubectl apply -f ui-service.yaml'
+                    sh 'kubectl apply -f ingress.yaml'
+                }
             }
         }
     }
